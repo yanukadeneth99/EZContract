@@ -9,7 +9,7 @@ export function middleware(request: NextRequest) {
   if (false) return NextResponse.redirect(new URL("/", request.url));
 }
 
-// Catching everything inside dashboard
+// Catching everything inside user
 export const config = {
-  matcher: "/dashboard:path*",
+  matcher: "/user:path*",
 };

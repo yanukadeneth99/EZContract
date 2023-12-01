@@ -10,18 +10,25 @@ export default function ConnectorButton() {
 
   return (
     <>
+      {/* Wallet not Connected */}
       {isDisconnected && <ConnectButton />}
-      {isConnecting && <p>Connecting...</p>}
+
+      {/* Connection ongoing */}
+      {isConnecting && <p>Connecting, please check your wallet...</p>}
+
       {/* Connected */}
       {address && (
         <div className="w-full flex flex-row justify-center space-x-12 items-center">
-          <Link href="/dashboard">
-            <button className="bg-red-500 p-3">Get Started</button>
-          </Link>
-
-          <button className="bg-red-500 p-3" onClick={() => disconnect()}>
+          <button
+            className="border-red-500 border-2 p-3"
+            onClick={() => disconnect()}
+          >
             Disconnect Wallet
           </button>
+
+          <Link href="/user">
+            <button className="bg-green-500 p-3">Get Started</button>
+          </Link>
         </div>
       )}
     </>
