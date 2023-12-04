@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect } from "react";
 
-export default function page() {
+export default function User() {
   useEffect(() => {
     window.location.href = "/user/deploy";
   }, []);

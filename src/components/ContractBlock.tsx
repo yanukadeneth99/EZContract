@@ -16,7 +16,7 @@ export default function ContractBlock({
     <div className="h-full basis-1/3 p-4 flex justify-center items-center">
       <Link
         href={path}
-        className="bg-gray-700 hover:scale-105 border-2 shadow-lg h-2/3 w-full flex flex-col justify-start items-center p-4"
+        className="bg-gray-700 hover:scale-105 border-2 hover:border-blue-300 shadow-lg h-1/2 w-full flex flex-col justify-start items-center p-4"
       >
         <p className="tet-md uppercase">Deploying the contract:</p>
         <div className="border-5 p-2 flex flex-col justify-center items-center mt-6 shadow-md rounded">
