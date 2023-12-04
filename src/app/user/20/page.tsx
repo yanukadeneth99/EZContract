@@ -106,7 +106,7 @@ export default function FT() {
               <div
                 className={`basis-1/5 ${!isMintSelected && "text-gray-500"}`}
               >
-                Pre Mint:{" "}
+                Pre Mint:
               </div>
               <div className="basis-3/5">
                 <Input
