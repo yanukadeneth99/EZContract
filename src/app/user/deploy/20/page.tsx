@@ -2,6 +2,10 @@
 import BackButton from "@/components/BackButton";
 import { Button, Divider, Input, Switch } from "@nextui-org/react";
 import { useState } from "react";
+import { createWalletClient, custom } from "viem";
+import { sepolia } from "viem/chains";
+
+import * as ERC from "../../../../data/ERC20.json";
 
 export default function FT() {
   // States to control toggles
@@ -18,7 +22,11 @@ export default function FT() {
   const [nameError, setNameError] = useState<string>("");
   const [symbolError, setSymbolError] = useState<string>("");
 
-  function submit(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+  const [loading, setLoading] = useState<boolean>(false);
+
+  async function submit(
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) {
     event.preventDefault();
 
     // Check if name is empty
@@ -48,6 +56,38 @@ export default function FT() {
       pausable: isPausableSelected,
     });
     console.log(data);
+
+    if (window.ethereum === undefined) {
+      console.error("No Ethereum Wallet");
+    }
+
+    // Get the Signer Information
+    const [account] = await window.ethereum.request({
+      method: "eth_requestAccounts",
+    });
+    console.log(account);
+
+    const walletClient = createWalletClient({
+      chain: sepolia,
+      transport: custom(window.ethereum),
+    });
+
+    const abi = ERC.abi;
+    const bytecode = ERC.bytecode as `0x${string}`;
+
+    setLoading(true);
+
+    const hash = await walletClient
+      .deployContract({
+        abi,
+        account,
+        args: [account, name, symbol],
+        bytecode,
+      })
+      .then(() => {
+        setLoading(false);
+        console.log(hash);
+      });
   }
 
   return (
@@ -241,6 +281,7 @@ export default function FT() {
               type="submit"
               onClick={(e) => submit(e)}
               size="lg"
+              isLoading={loading}
               color="primary"
               variant="shadow"
             >
