@@ -10,6 +10,46 @@ export default function FT() {
   const [isBurnableSelected, setBurnableSelected] = useState<boolean>(false);
   const [isPausableSelected, setPausableSelected] = useState<boolean>(false);
 
+  // States to hold values
+  const [name, setName] = useState<string>("");
+  const [symbol, setSymbol] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [premint, setPremint] = useState<string>("");
+  const [nameError, setNameError] = useState<string>("");
+  const [symbolError, setSymbolError] = useState<string>("");
+
+  function submit(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+    event.preventDefault();
+
+    // Check if name is empty
+    if (name === "") {
+      setNameError("Name cannot be empty");
+      return;
+    } else {
+      setNameError("");
+    }
+
+    // Check if symbol is empty
+    if (symbol === "") {
+      setSymbolError("Symbol cannot be empty");
+      return;
+    } else {
+      setSymbolError("");
+    }
+
+    const data = JSON.stringify({
+      name: name,
+      symbol: symbol,
+      email: email,
+      premint: premint,
+      premintselected: isMintSelected,
+      mintable: isMintableSelected,
+      burnable: isBurnableSelected,
+      pausable: isPausableSelected,
+    });
+    console.log(data);
+  }
+
   return (
     <div className="w-full h-full flex flex-col justify-center items-center">
       {/* Header */}
@@ -23,7 +63,7 @@ export default function FT() {
         <h1 className="text-4xl font-bold">Create your own Fungible Token</h1>
 
         {/* Form */}
-        <div className="flex flex-col justify-center items-center w-full p-3 space-y-12">
+        <form className="flex flex-col justify-center items-center w-full p-3 space-y-12">
           {/* Name */}
           <div className="flex flex-col justify-center items-center w-full space-y-2">
             <div className="flex flex-row justify-center items-center w-full">
@@ -32,11 +72,16 @@ export default function FT() {
               <div className="basis-3/5">
                 <Input
                   key="name_crypto"
-                  isRequired
                   type="text"
+                  isRequired
                   label="Name"
                   placeholder="Bitcoin"
                   aria-label="Name"
+                  value={name}
+                  onValueChange={setName}
+                  isInvalid={nameError !== ""}
+                  color={nameError !== "" ? "danger" : "default"}
+                  errorMessage={nameError !== "" && "Please enter a valid name"}
                 />
               </div>
             </div>
@@ -59,6 +104,13 @@ export default function FT() {
                   label="Symbol"
                   placeholder="BTC"
                   aria-label="Symbol"
+                  value={symbol}
+                  onValueChange={setSymbol}
+                  isInvalid={symbolError !== ""}
+                  color={symbolError !== "" ? "danger" : "default"}
+                  errorMessage={
+                    symbolError !== "" && "Please enter a valid symbol"
+                  }
                 />
               </div>
             </div>
@@ -81,6 +133,8 @@ export default function FT() {
                   label="Security Email"
                   placeholder="security@company.com"
                   aria-label="Security Email"
+                  value={email}
+                  onValueChange={setEmail}
                 />
               </div>
             </div>
@@ -97,7 +151,6 @@ export default function FT() {
             <div className="flex flex-row justify-center items-center w-full">
               <div className="basis-1/5  flex justify-end items-center pr-12">
                 <Switch
-                  defaultSelected={false}
                   aria-label="Enable Mint"
                   isSelected={isMintSelected}
                   onValueChange={setMintSelected}
@@ -116,6 +169,8 @@ export default function FT() {
                   disabled={!isMintSelected}
                   placeholder="5000"
                   aria-label="Mint"
+                  value={premint}
+                  onValueChange={setPremint}
                 />
               </div>
             </div>
@@ -179,14 +234,20 @@ export default function FT() {
               </p>
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* Submit Form */}
-      <div className="pb-24 w-full flex justify-center items-center">
-        <Button size="lg" color="primary" variant="shadow">
-          Submit
-        </Button>
+          {/* Submit Form */}
+          <div className="pb-24 w-full flex justify-center items-center">
+            <Button
+              type="submit"
+              onClick={(e) => submit(e)}
+              size="lg"
+              color="primary"
+              variant="shadow"
+            >
+              Submit
+            </Button>
+          </div>
+        </form>
       </div>
     </div>
   );

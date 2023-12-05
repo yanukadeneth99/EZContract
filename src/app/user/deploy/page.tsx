@@ -8,21 +8,21 @@ export default function Deploy() {
           title="ERC-20"
           tagline="Cryptocurrency"
           description="Deploy this contract when you want to create a crypto currency that people can trade with."
-          path="/user/20"
+          path="/user/deploy/20"
         />
 
         <ContractBlock
           title="ERC-721"
           tagline="NFT"
           description="Deploy this contract when you want to create a NFT that people can mint. One NFT can only be owned by one person."
-          path="/user/721"
+          path="/user/deploy/721"
         />
 
         <ContractBlock
           title="ERC-1155"
           tagline="NFT"
           description="Deploy this contract when you want to create a NFT that people can mint. One NFT can be owned by multiple people."
-          path="/user/1155"
+          path="/user/deploy/1155"
         />
       </div>
     </main>
