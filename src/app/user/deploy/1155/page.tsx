@@ -1,7 +1,7 @@
 "use client";
 import BackButton from "@/components/BackButton";
 import { Button, Divider, Input, Switch, Link } from "@nextui-org/react";
-import { use, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export default function NFT() {
   // States to control toggles
@@ -14,8 +14,23 @@ export default function NFT() {
   const [isBurnableSelected, setBurnableSelected] = useState<boolean>(false);
   const [isPausableSelected, setPausableSelected] = useState<boolean>(false);
 
+  // States to Hold Data
+  const [name, setName] = useState<string>("");
+  const [symbol, setSymbol] = useState<string>("");
+  const [securityEmail, setSecurityEmail] = useState<string>("");
+  const [baseURI, setBaseURI] = useState<string>("");
+  const [publicPrice, setPublicPrice] = useState<string>("");
+  const [maxTokens, setMaxTokens] = useState<string>("");
   const [whitelistText, setWhitelistText] = useState<string>("");
   const [whitelist, setWhitelist] = useState<string[]>([]);
+  const [whitelistPrice, setWhitelistPrice] = useState<string>("");
+  const [premint, setPremint] = useState<string>("");
+
+  // States to Hold Errors
+  const [nameError, setNameError] = useState<string>("");
+  const [symbolError, setSymbolError] = useState<string>("");
+  const [baseURIError, setBaseURIError] = useState<string>("");
+  const [publicPriceError, setPublicPriceError] = useState<string>("");
 
   // Regex Test for Whitelist Address
   const validateEmail = (value: string) => value.match(/^0x[a-fA-F0-9]{40}$/gm);
@@ -43,6 +58,56 @@ export default function NFT() {
     if (isMaxMintSelected) setMaxMintSelected(false);
   }, [isURISelected]);
 
+  // Submit Function
+  function submit(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+    event.preventDefault();
+
+    // Check if name is empty
+    if (name === "") {
+      setNameError("Name cannot be empty");
+      return;
+    } else {
+      setNameError("");
+    }
+
+    // Check if symbol is empty
+    if (symbol === "") {
+      setSymbolError("Symbol cannot be empty");
+      return;
+    } else {
+      setSymbolError("");
+    }
+
+    // Check if baseURI is empty
+    if (baseURI === "") {
+      setBaseURIError("Base URI cannot be empty");
+      return;
+    } else {
+      setBaseURIError("");
+    }
+
+    // Check if publicPrice is empty
+    if (publicPrice === "") {
+      setPublicPriceError("Public Price cannot be empty");
+      return;
+    } else {
+      setPublicPriceError("");
+    }
+
+    const data = JSON.stringify({
+      name: name,
+      symbol: symbol,
+      email: securityEmail,
+      premint: premint,
+      premintselected: isMintSelected,
+      supplyTracking: isSupplyTrackingSelected,
+      burnable: isBurnableSelected,
+      pausable: isPausableSelected,
+    });
+
+    console.log(data);
+  }
+
   return (
     <div className="w-full h-full flex flex-col justify-center items-center">
       {/* Header */}
@@ -58,7 +123,7 @@ export default function NFT() {
         </h1>
 
         {/* Form */}
-        <div className="flex flex-col justify-center items-center w-full p-3 space-y-12">
+        <form className="flex flex-col justify-center items-center w-full p-3 space-y-12">
           {/* Name */}
           <div className="flex flex-col justify-center items-center w-full space-y-2">
             <div className="flex flex-row justify-center items-center w-full">
@@ -72,6 +137,11 @@ export default function NFT() {
                   label="Name"
                   placeholder="Bored Ape Yacht Club"
                   aria-label="Name"
+                  value={name}
+                  onValueChange={setName}
+                  isInvalid={nameError !== ""}
+                  color={nameError !== "" ? "danger" : "default"}
+                  errorMessage={nameError !== "" && "Please enter a valid name"}
                 />
               </div>
             </div>
@@ -94,6 +164,13 @@ export default function NFT() {
                   label="Symbol"
                   placeholder="BAYC"
                   aria-label="Symbol"
+                  value={symbol}
+                  onValueChange={setSymbol}
+                  isInvalid={symbolError !== ""}
+                  color={symbolError !== "" ? "danger" : "default"}
+                  errorMessage={
+                    symbolError !== "" && "Please enter a valid symbol"
+                  }
                 />
               </div>
             </div>
@@ -116,6 +193,8 @@ export default function NFT() {
                   label="Security Email"
                   placeholder="security@company.com"
                   aria-label="Security Email"
+                  value={securityEmail}
+                  onValueChange={setSecurityEmail}
                 />
               </div>
             </div>
@@ -136,10 +215,17 @@ export default function NFT() {
                 <Input
                   key="baseuri_crypto"
                   isRequired
-                  type="text"
+                  type="url"
                   label="Base URI"
                   placeholder="ipfs://url"
                   aria-label="Symbol"
+                  value={baseURI}
+                  onValueChange={setBaseURI}
+                  isInvalid={baseURIError !== ""}
+                  color={baseURIError !== "" ? "danger" : "default"}
+                  errorMessage={
+                    baseURIError !== "" && "Please enter a valid URI"
+                  }
                 />
               </div>
             </div>
@@ -163,6 +249,13 @@ export default function NFT() {
                   label="Public Price"
                   aria-label="Public Price"
                   placeholder="0.00"
+                  value={publicPrice}
+                  onValueChange={setPublicPrice}
+                  isInvalid={publicPriceError !== ""}
+                  color={publicPriceError !== "" ? "danger" : "default"}
+                  errorMessage={
+                    publicPriceError !== "" && "Please enter a valid Price"
+                  }
                   startContent={
                     <div className="pointer-events-none flex items-center">
                       <span className="text-default-400 text-small">ETH</span>
@@ -205,6 +298,8 @@ export default function NFT() {
                   label={isMaxMintSelected ? "Max NFTs" : "Max NFTs (Disabled)"}
                   aria-label="Max NFTs"
                   placeholder="1000"
+                  value={maxTokens}
+                  onValueChange={setMaxTokens}
                 />
               </div>
             </div>
@@ -306,9 +401,11 @@ export default function NFT() {
                 <Input
                   type="number"
                   key="whitelist_price_crypto"
-                  aria-label="Public Price"
+                  aria-label="Whitelist Price"
                   disabled={!isWhiteListSelected}
                   placeholder="0.00"
+                  value={whitelistPrice}
+                  onValueChange={setWhitelistPrice}
                   startContent={
                     <div className="pointer-events-none flex items-center">
                       <span className="text-default-400 text-small">ETH</span>
@@ -350,6 +447,8 @@ export default function NFT() {
                   disabled={!isMintSelected}
                   placeholder="5000"
                   aria-label="Mint"
+                  value={premint}
+                  onValueChange={setPremint}
                 />
               </div>
             </div>
@@ -428,14 +527,20 @@ export default function NFT() {
               </p>
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* Submit Form */}
-      <div className="pb-24 w-full flex justify-center items-center">
-        <Button size="lg" color="primary" variant="shadow">
-          Submit
-        </Button>
+          {/* Submit */}
+          <div className="pb-24 w-full flex justify-center items-center">
+            <Button
+              onClick={(e) => submit(e)}
+              type="submit"
+              size="lg"
+              color="primary"
+              variant="shadow"
+            >
+              Submit
+            </Button>
+          </div>
+        </form>
       </div>
     </div>
   );
