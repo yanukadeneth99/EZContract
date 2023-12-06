@@ -1,13 +1,16 @@
 "use client";
 import BackButton from "@/components/BackButton";
-import { Button, Divider, Input, Switch } from "@nextui-org/react";
+import { Button, Divider, Input, Switch, Link } from "@nextui-org/react";
 import { useState } from "react";
-import { createWalletClient, custom } from "viem";
+import { createPublicClient, createWalletClient, custom, http } from "viem";
 import { sepolia } from "viem/chains";
 
-import * as ERC from "../../../../data/ERC20.json";
+import getContractName from "../../../functions/GetERC20";
 
-export default function FT() {
+import { ERC20DataINT } from "../../../interface/ERC20Data";
+import ERC20 from "../../../data/ERC20.json" assert { type: "json" };
+
+export default function Page() {
   // States to control toggles
   const [isMintSelected, setMintSelected] = useState<boolean>(false);
   const [isMintableSelected, setMintableSelected] = useState<boolean>(false);
@@ -17,10 +20,12 @@ export default function FT() {
   // States to hold values
   const [name, setName] = useState<string>("");
   const [symbol, setSymbol] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
   const [premint, setPremint] = useState<string>("");
   const [nameError, setNameError] = useState<string>("");
   const [symbolError, setSymbolError] = useState<string>("");
+  const [status, setStatus] = useState<string>("");
+  const [deployContractAddress, setDeployContractAddress] =
+    useState<`0x${string}`>("0x");
 
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -45,49 +50,76 @@ export default function FT() {
       setSymbolError("");
     }
 
-    const data = JSON.stringify({
+    const data: ERC20DataINT = {
       name: name,
       symbol: symbol,
-      email: email,
       premint: premint,
       premintselected: isMintSelected,
       mintable: isMintableSelected,
       burnable: isBurnableSelected,
       pausable: isPausableSelected,
-    });
-    console.log(data);
+    };
+
+    setStatus("Reading data...");
 
     if (window.ethereum === undefined) {
       console.error("No Ethereum Wallet");
+      return;
     }
+
+    setStatus("Waiting account signing...");
 
     // Get the Signer Information
     const [account] = await window.ethereum.request({
       method: "eth_requestAccounts",
     });
-    console.log(account);
 
     const walletClient = createWalletClient({
       chain: sepolia,
       transport: custom(window.ethereum),
     });
 
-    const abi = ERC.abi;
-    const bytecode = ERC.bytecode as `0x${string}`;
+    const publicClient = createPublicClient({
+      chain: sepolia,
+      transport: http(),
+    });
 
     setLoading(true);
+    setStatus("Deploying contract...");
+    const conName = getContractName(data);
+    console.log(conName);
 
-    const hash = await walletClient
-      .deployContract({
+    const abi = ERC20[conName][0] as string[];
+    const bytecode = ERC20[conName][1] as `0x${string}`;
+    const passedArgs = conName.toUpperCase().includes("PM")
+      ? [account, name, symbol, parseInt(premint)]
+      : [account, name, symbol];
+
+    try {
+      const hash = (await walletClient.deployContract({
         abi,
         account,
-        args: [account, name, symbol],
+        args: passedArgs,
         bytecode,
-      })
-      .then(() => {
-        setLoading(false);
-        console.log(hash);
-      });
+      })) as `0x${string}`;
+
+      setStatus("Waiting for Transaction to complete...");
+
+      await publicClient
+        .waitForTransactionReceipt({
+          hash: hash,
+        })
+        .then((res) => {
+          console.log(res);
+          setStatus("Deployed to: " + res.contractAddress);
+          setDeployContractAddress(res.contractAddress as `0x${string}`);
+          setLoading(false);
+        });
+    } catch (error) {
+      console.error(error);
+      setStatus("Error Occured! Please re-try");
+      setLoading(false);
+    }
   }
 
   return (
@@ -99,7 +131,6 @@ export default function FT() {
 
       {/* Body */}
       <div className="w-3/4 flex flex-col justify-start items-center p-12 space-y-24">
-        {/*  */}
         <h1 className="text-4xl font-bold">Create your own Fungible Token</h1>
 
         {/* Form */}
@@ -157,32 +188,6 @@ export default function FT() {
             <p className="text-gray-600 text-sm text-right w-4/6 self-end">
               This will be the Symbol of your Cryptocurrency. This will be used
               on the blockchain to identify your Cryptocurrency.
-            </p>
-          </div>
-
-          {/* Security Address */}
-          <div className="flex flex-col justify-center items-center w-full space-y-2">
-            <div className="flex flex-row justify-center items-center w-full">
-              <div className="basis-1/5"></div>
-              <div className="basis-1/5">Security Email: </div>
-              <div className="basis-3/5">
-                <Input
-                  key="security_email_crypto"
-                  isRequired={false}
-                  type="email"
-                  label="Security Email"
-                  placeholder="security@company.com"
-                  aria-label="Security Email"
-                  value={email}
-                  onValueChange={setEmail}
-                />
-              </div>
-            </div>
-            <p className="text-gray-600 text-sm text-right w-4/6 self-end">
-              This is an optional field to add your security email in the
-              contract to contact you incase someone finds a bug in your
-              contract. Note that this email will be visible to everyone on the
-              blockchain.
             </p>
           </div>
 
@@ -276,7 +281,7 @@ export default function FT() {
           </div>
 
           {/* Submit Form */}
-          <div className="pb-24 w-full flex justify-center items-center">
+          <div className="pb-24 w-full flex flex-col justify-center items-center space-y-3">
             <Button
               type="submit"
               onClick={(e) => submit(e)}
@@ -287,6 +292,17 @@ export default function FT() {
             >
               Submit
             </Button>
+            <p>
+              {status.includes("Deployed") ? (
+                <Link
+                  href={`https://sepolia.etherscan.io/address/${deployContractAddress}`}
+                >
+                  {status}
+                </Link>
+              ) : (
+                status
+              )}
+            </p>
           </div>
         </form>
       </div>
