@@ -1,14 +1,21 @@
 "use client";
+declare const window: any;
 import BackButton from "@/components/BackButton";
 import { Button, Divider, Input, Switch, Link } from "@nextui-org/react";
 import { useState } from "react";
-import { createPublicClient, createWalletClient, custom, http } from "viem";
+import {
+  Abi,
+  createPublicClient,
+  createWalletClient,
+  custom,
+  http,
+} from "viem";
 import { sepolia } from "viem/chains";
 
 import getContractName from "../../../functions/GetERC20";
 
 import { ERC20DataINT } from "../../../interface/ERC20Data";
-import ERC20 from "../../../data/ERC20.json" assert { type: "json" };
+import * as ERC20 from "../../../data/ERC20.json" assert { type: "json" };
 
 export default function Page() {
   // States to control toggles
@@ -70,10 +77,12 @@ export default function Page() {
     setStatus("Waiting account signing...");
 
     // Get the Signer Information
+    // eslint-disable-next-line no-use-before-define
     const [account] = await window.ethereum.request({
       method: "eth_requestAccounts",
     });
 
+    // eslint-disable-next-line no-use-before-define
     const walletClient = createWalletClient({
       chain: sepolia,
       transport: custom(window.ethereum),
@@ -87,21 +96,20 @@ export default function Page() {
     setLoading(true);
     setStatus("Deploying contract...");
     const conName = getContractName(data);
-    console.log(conName);
 
-    const abi = ERC20[conName][0] as string[];
-    const bytecode = ERC20[conName][1] as `0x${string}`;
+    const abi = ERC20[conName as keyof typeof ERC20][0] as readonly unknown[];
+    const bytecode = ERC20[conName as keyof typeof ERC20][1] as `0x${string}`;
     const passedArgs = conName.toUpperCase().includes("PM")
       ? [account, name, symbol, parseInt(premint)]
       : [account, name, symbol];
 
     try {
-      const hash = (await walletClient.deployContract({
+      const hash = await walletClient.deployContract({
         abi,
         account,
         args: passedArgs,
         bytecode,
-      })) as `0x${string}`;
+      });
 
       setStatus("Waiting for Transaction to complete...");
 
