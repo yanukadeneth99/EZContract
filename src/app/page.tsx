@@ -1,7 +1,6 @@
 import ConnectorButton from "@/components/ConnectorButton";
 
 export default function Home() {
-
   return (
     <main className="h-screen w-screen flex justify-center items-center">
       <div className="w-5/6 h-3/6 lg:h-5/6 bg-gray-600 border-gray-400/50 border-4 rounded-md p-5 flex justify-center items-center flex-col space-y-6">

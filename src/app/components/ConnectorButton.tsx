@@ -26,7 +26,7 @@ export default function ConnectorButton() {
             Disconnect Wallet
           </button>
 
-          <Link href="/user">
+          <Link href="/user/deploy">
             <button className="bg-green-500 p-3">Get Started</button>
           </Link>
         </div>
