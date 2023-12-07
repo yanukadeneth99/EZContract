@@ -11,7 +11,7 @@ import { sepolia } from "viem/chains";
 import Confetti from "@/components/Confetti";
 import getContractName from "../../functions/GetERC20";
 
-import { ERC20DataINT } from "../../interface/ERC20Data";
+import { ERC20DataINT } from "../../interface/DataInterface";
 import * as ERC20 from "../../data/ERC20.json" assert { type: "json" };
 
 export default function Page() {
@@ -358,7 +358,7 @@ export default function Page() {
                   isLoading={loading}
                   color="primary"
                   variant="shadow"
-                  className="uppercase"
+                  className="uppercase font-mono"
                 >
                   Submit
                 </Button>

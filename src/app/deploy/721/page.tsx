@@ -1,10 +1,17 @@
 "use client";
+declare const window: any;
 import BackButton from "@/components/BackButton";
 import { Button, Divider, Input, Switch, Link } from "@nextui-org/react";
 import { useEffect, useMemo, useState } from "react";
 import Confetti from "@/components/Confetti";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount, useDisconnect } from "wagmi";
+import { createPublicClient, createWalletClient, custom, http } from "viem";
+import { sepolia } from "viem/chains";
+
+import { ERC721DataINT } from "../../interface/DataInterface";
+import * as ERC721 from "../../data/ERC721.json" assert { type: "json" };
+import getContractName from "../../functions/GetERC721";
 
 export default function Page() {
   // States to control toggles
@@ -20,7 +27,7 @@ export default function Page() {
   const [publicPrice, setPublicPrice] = useState<string>("");
   const [maxTokens, setMaxTokens] = useState<string>("");
   const [whitelistText, setWhitelistText] = useState<string>("");
-  const [whitelist, setWhitelist] = useState<string[]>([]);
+  const [whitelist, setWhitelist] = useState<`0x${string}`[]>([]);
   const [whitelistPrice, setWhitelistPrice] = useState<string>("");
   const [premint, setPremint] = useState<string>("");
 
@@ -52,7 +59,7 @@ export default function Page() {
   function addWhitelist() {
     if (isInvalid) return;
     if (whitelistText === "") return;
-    setWhitelist([...whitelist, whitelistText]);
+    setWhitelist([...whitelist, whitelistText as `0x${string}`]);
     setWhitelistText("");
   }
 
@@ -61,13 +68,10 @@ export default function Page() {
     setWhitelist(newWhitelist);
   }
 
-  // Reset Max Mint if URI is selected
-  useEffect(() => {
-    if (isMaxMintSelected) setMaxMintSelected(false);
-  }, [isURISelected]);
-
   // Submit Function
-  function submit(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+  async function submit(
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) {
     event.preventDefault();
 
     // Check if name is empty
@@ -117,7 +121,24 @@ export default function Page() {
       }
     }
 
-    const data = JSON.stringify({
+    // Check if all numeric inputs are above 0
+    if (
+      parseInt(publicPrice) <= 0 ||
+      (isMaxMintSelected && parseInt(maxTokens) <= 0) ||
+      (isPremintSelected && parseInt(premint) <= 0) ||
+      (isWhiteListSelected && parseInt(whitelistPrice) <= 0)
+    ) {
+      setStatus("All numeric inputs must be above 0");
+      return;
+    }
+
+    // If whitelist is enabled, there must be atleast one whitelist
+    if (isWhiteListSelected && whitelist.length === 0) {
+      setStatus("There must be atleast one whitelist");
+      return;
+    }
+
+    const data: ERC721DataINT = {
       name: name,
       symbol: symbol,
       premint: premint,
@@ -130,9 +151,96 @@ export default function Page() {
       ismaxmintselected: isMaxMintSelected,
       isuriselected: isURISelected,
       premintselected: isPremintSelected,
+    };
+
+    setStatus("Reading data...");
+
+    if (window.ethereum === undefined) {
+      console.error("No Ethereum Wallet");
+      return;
+    }
+
+    setStatus("Waiting account signing...");
+
+    // Get the Signer Information
+    // eslint-disable-next-line no-use-before-define
+    const [account] = await window.ethereum.request({
+      method: "eth_requestAccounts",
     });
 
-    console.log(data);
+    // eslint-disable-next-line no-use-before-define
+    const walletClient = createWalletClient({
+      chain: sepolia,
+      transport: custom(window.ethereum),
+    });
+
+    const publicClient = createPublicClient({
+      chain: sepolia,
+      transport: http(),
+    });
+
+    setLoading(true);
+    setStatus("Deploying contract...");
+    const conName = getContractName(data);
+    console.log("Contract Name: ", conName);
+
+    const abi = ERC721[conName as keyof typeof ERC721][0] as readonly unknown[];
+    const bytecode = ERC721[conName as keyof typeof ERC721][1] as `0x${string}`;
+
+    let passedArgs: unknown[] = [];
+
+    passedArgs.push(account);
+    passedArgs.push(name);
+    passedArgs.push(symbol);
+    passedArgs.push(baseURI);
+    passedArgs.push(parseInt(publicPrice));
+
+    if (isMaxMintSelected) passedArgs.push(parseInt(maxTokens));
+    if (isWhiteListSelected) passedArgs.push(whitelist);
+    if (isWhiteListSelected) passedArgs.push(parseInt(whitelistPrice));
+    if (isPremintSelected) passedArgs.push(parseInt(premint));
+
+    console.log(passedArgs);
+
+    try {
+      const hash = await walletClient.deployContract({
+        abi,
+        account,
+        args: passedArgs,
+        bytecode,
+      });
+
+      setStatus("Waiting for Transaction to complete...");
+
+      await publicClient
+        .waitForTransactionReceipt({
+          hash: hash,
+        })
+        .then((res) => {
+          console.log(res);
+          setStatus("Deployed to: " + res.contractAddress);
+          setDeployContractAddress(res.contractAddress as `0x${string}`);
+          setLoading(false);
+          setVisible(true);
+          setName("");
+          setSymbol("");
+          setPremint("");
+          setBaseURI("");
+          setPublicPrice("");
+          setMaxTokens("");
+          setWhitelist([]);
+          setWhitelistText("");
+          setWhitelistPrice("");
+          setPremintSelected(false);
+          setWhiteListSelected(false);
+          setMaxMintSelected(false);
+          setURISelected(false);
+        });
+    } catch (error) {
+      console.error(error);
+      setStatus("Error Occured! Please re-try");
+      setLoading(false);
+    }
   }
 
   return (
@@ -256,6 +364,7 @@ export default function Page() {
               <div className="basis-3/5">
                 <Input
                   type="number"
+                  min={0}
                   key="public_price_crypto"
                   isRequired={true}
                   label="Public Price"
@@ -291,11 +400,7 @@ export default function Page() {
                   defaultSelected={false}
                   aria-label="Enable Mint"
                   isSelected={isMaxMintSelected}
-                  onValueChange={() =>
-                    setMaxMintSelected(
-                      isURISelected ? false : !isMaxMintSelected
-                    )
-                  }
+                  onValueChange={setMaxMintSelected}
                 />
               </div>
               <div
@@ -308,6 +413,7 @@ export default function Page() {
               <div className="basis-3/5">
                 <Input
                   type="number"
+                  min={0}
                   key="maxTokens_crypto"
                   isRequired={false}
                   label={isMaxMintSelected ? "Max NFTs" : "Max NFTs (Disabled)"}
@@ -465,6 +571,7 @@ export default function Page() {
                 <Input
                   key="mint_crypto"
                   type="number"
+                  min={0}
                   label={isPremintSelected ? "Pre Mint" : "Pre Mint (Disabled)"}
                   disabled={!isPremintSelected}
                   className="font-mono"
@@ -532,12 +639,12 @@ export default function Page() {
                   isLoading={loading}
                   color="primary"
                   variant="shadow"
-                  className="uppercase"
+                  className="uppercase font-mono"
                 >
                   Submit
                 </Button>
                 <p className="font-mono text-gray-200 uppercase">
-                  {status.includes("DEPLOYED") ? (
+                  {status.toUpperCase().includes("DEPLOYED") ? (
                     <Link
                       href={`https://sepolia.etherscan.io/address/${deployContractAddress}`}
                     >
