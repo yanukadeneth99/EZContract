@@ -2,22 +2,20 @@
 import BackButton from "@/components/BackButton";
 import { Button, Divider, Input, Switch, Link } from "@nextui-org/react";
 import { useEffect, useMemo, useState } from "react";
+import Confetti from "@/components/Confetti";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { useAccount, useDisconnect } from "wagmi";
 
-export default function NFT() {
+export default function Page() {
   // States to control toggles
-  const [isMintSelected, setMintSelected] = useState<boolean>(false);
+  const [isPremintSelected, setPremintSelected] = useState<boolean>(false);
   const [isWhiteListSelected, setWhiteListSelected] = useState<boolean>(false);
   const [isMaxMintSelected, setMaxMintSelected] = useState<boolean>(false);
   const [isURISelected, setURISelected] = useState<boolean>(false);
-  const [isSupplyTrackingSelected, setSupplyTrackingSelected] =
-    useState<boolean>(false);
-  const [isBurnableSelected, setBurnableSelected] = useState<boolean>(false);
-  const [isPausableSelected, setPausableSelected] = useState<boolean>(false);
 
   // States to Hold Data
   const [name, setName] = useState<string>("");
   const [symbol, setSymbol] = useState<string>("");
-  const [securityEmail, setSecurityEmail] = useState<string>("");
   const [baseURI, setBaseURI] = useState<string>("");
   const [publicPrice, setPublicPrice] = useState<string>("");
   const [maxTokens, setMaxTokens] = useState<string>("");
@@ -31,6 +29,16 @@ export default function NFT() {
   const [symbolError, setSymbolError] = useState<string>("");
   const [baseURIError, setBaseURIError] = useState<string>("");
   const [publicPriceError, setPublicPriceError] = useState<string>("");
+
+  const [visible, setVisible] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [status, setStatus] = useState<string>("");
+  const [deployContractAddress, setDeployContractAddress] =
+    useState<`0x${string}`>("0x");
+
+  // Hooks
+  const { address, isConnecting, isDisconnected } = useAccount();
+  const { disconnect } = useDisconnect();
 
   // Regex Test for Whitelist Address
   const validateEmail = (value: string) => value.match(/^0x[a-fA-F0-9]{40}$/gm);
@@ -94,33 +102,52 @@ export default function NFT() {
       setPublicPriceError("");
     }
 
+    // Check if BaseURI has a / in the end
+    if (baseURI[baseURI.length - 1] !== "/") {
+      setBaseURIError("Base URI must end with /");
+      return;
+    } else {
+      setBaseURIError("");
+    }
+
+    if (isPremintSelected && isMaxMintSelected) {
+      if (parseInt(premint) > parseInt(maxTokens)) {
+        setStatus("Premint cannot be greater than Max Tokens");
+        return;
+      }
+    }
+
     const data = JSON.stringify({
       name: name,
       symbol: symbol,
-      email: securityEmail,
       premint: premint,
-      premintselected: isMintSelected,
-      supplyTracking: isSupplyTrackingSelected,
-      burnable: isBurnableSelected,
-      pausable: isPausableSelected,
+      baseuri: baseURI,
+      publicPrice: publicPrice,
+      maxTokens: maxTokens,
+      whitelist: whitelist,
+      whitelistPrice: whitelistPrice,
+      iswhitelistselected: isWhiteListSelected,
+      ismaxmintselected: isMaxMintSelected,
+      isuriselected: isURISelected,
+      premintselected: isPremintSelected,
     });
 
     console.log(data);
   }
 
   return (
-    <div className="w-full h-full flex flex-col justify-center items-center">
+    <div className="w-screen h-screen flex flex-col justify-start items-center py-12 space-y-12">
       {/* Header */}
-      <div className="w-full flex justify-start items-center p-6 pt-12">
+      <div className="w-1/2 flex justify-center items-center space-x-6 p-3 backdrop-blur-md rounded-2xl">
         <BackButton />
+        <h1 className="text-3xl font-mono text-gray-200 font-bold">
+          Create your own Non-Fungible Token
+        </h1>
       </div>
 
       {/* Body */}
-      <div className="w-3/4 flex flex-col justify-start items-center p-12 space-y-24">
-        {/*  */}
-        <h1 className="text-4xl font-bold">
-          Create your own Non Fungible Token
-        </h1>
+      <div className="w-3/4 flex flex-col justify-start items-center p-3 backdrop-blur-md rounded-2xl backdrop-brightness-75 overflow-x-hidden overflow-y-scroll">
+        {visible && <Confetti />}
 
         {/* Form */}
         <form className="flex flex-col justify-center items-center w-full p-3 space-y-12">
@@ -128,7 +155,9 @@ export default function NFT() {
           <div className="flex flex-col justify-center items-center w-full space-y-2">
             <div className="flex flex-row justify-center items-center w-full">
               <div className="basis-1/5"></div>
-              <div className="basis-1/5">Name: </div>
+              <div className="basis-1/5 text-gray-100 font-mono text-xl text-center">
+                Name:
+              </div>
               <div className="basis-3/5">
                 <Input
                   key="name_crypto"
@@ -137,6 +166,7 @@ export default function NFT() {
                   label="Name"
                   placeholder="Bored Ape Yacht Club"
                   aria-label="Name"
+                  className="font-mono"
                   value={name}
                   onValueChange={setName}
                   isInvalid={nameError !== ""}
@@ -145,7 +175,7 @@ export default function NFT() {
                 />
               </div>
             </div>
-            <p className="text-gray-600 text-sm text-right w-4/6 self-end">
+            <p className="text-gray-300 text-xs text-right w-4/6 self-end font-mono">
               Enter the name you want to call your NFT. This name will be what
               the NFT will be called on the blockchain.
             </p>
@@ -155,7 +185,9 @@ export default function NFT() {
           <div className="flex flex-col justify-center items-center w-full space-y-2">
             <div className="flex flex-row justify-center items-center w-full">
               <div className="basis-1/5"></div>
-              <div className="basis-1/5">Symbol: </div>
+              <div className="basis-1/5 text-gray-100 font-mono text-xl text-center">
+                Symbol:
+              </div>
               <div className="basis-3/5">
                 <Input
                   key="symbol_crypto"
@@ -164,6 +196,7 @@ export default function NFT() {
                   label="Symbol"
                   placeholder="BAYC"
                   aria-label="Symbol"
+                  className="font-mono"
                   value={symbol}
                   onValueChange={setSymbol}
                   isInvalid={symbolError !== ""}
@@ -174,35 +207,9 @@ export default function NFT() {
                 />
               </div>
             </div>
-            <p className="text-gray-600 text-sm text-right w-4/6 self-end">
+            <p className="text-gray-300 text-xs text-right w-4/6 self-end font-mono">
               This will be the Symbol of your NFT. This will be used on the
               blockchain to identify your NFT.
-            </p>
-          </div>
-
-          {/* Security Address */}
-          <div className="flex flex-col justify-center items-center w-full space-y-2">
-            <div className="flex flex-row justify-center items-center w-full">
-              <div className="basis-1/5"></div>
-              <div className="basis-1/5">Security Email: </div>
-              <div className="basis-3/5">
-                <Input
-                  key="security_email_crypto"
-                  isRequired={false}
-                  type="email"
-                  label="Security Email"
-                  placeholder="security@company.com"
-                  aria-label="Security Email"
-                  value={securityEmail}
-                  onValueChange={setSecurityEmail}
-                />
-              </div>
-            </div>
-            <p className="text-gray-600 text-sm text-right w-4/6 self-end">
-              This is an optional field to add your security email in the
-              contract to contact you incase someone finds a bug in your
-              contract. Note that this email will be visible to everyone on the
-              blockchain.
             </p>
           </div>
 
@@ -210,15 +217,18 @@ export default function NFT() {
           <div className="flex flex-col justify-center items-center w-full space-y-2">
             <div className="flex flex-row justify-center items-center w-full">
               <div className="basis-1/5"></div>
-              <div className="basis-1/5">Base URI: </div>
+              <div className="basis-1/5 text-gray-100 font-mono text-xl text-center">
+                Base URI:
+              </div>
               <div className="basis-3/5">
                 <Input
                   key="baseuri_crypto"
                   isRequired
                   type="url"
                   label="Base URI"
-                  placeholder="ipfs://url"
+                  placeholder="ipfs://url/"
                   aria-label="Symbol"
+                  className="font-mono"
                   value={baseURI}
                   onValueChange={setBaseURI}
                   isInvalid={baseURIError !== ""}
@@ -229,7 +239,7 @@ export default function NFT() {
                 />
               </div>
             </div>
-            <p className="text-gray-600 text-sm text-right w-4/6 self-end">
+            <p className="text-gray-300 text-xs text-right w-4/6 self-end font-mono">
               This will the base URI for the location that contains your meta
               data files. Recommended to use IPFS. Make sure to have the
               &quot;/&quot; at the end of this URI.
@@ -240,7 +250,9 @@ export default function NFT() {
           <div className="flex flex-col justify-center items-center w-full space-y-2">
             <div className="flex flex-row justify-center items-center w-full">
               <div className="basis-1/5"></div>
-              <div className="basis-1/5">Public Price: </div>
+              <div className="basis-1/5 text-gray-100 font-mono text-xl text-center">
+                Public Price:
+              </div>
               <div className="basis-3/5">
                 <Input
                   type="number"
@@ -249,6 +261,7 @@ export default function NFT() {
                   label="Public Price"
                   aria-label="Public Price"
                   placeholder="0.00"
+                  className="font-mono"
                   value={publicPrice}
                   onValueChange={setPublicPrice}
                   isInvalid={publicPriceError !== ""}
@@ -264,7 +277,7 @@ export default function NFT() {
                 />
               </div>
             </div>
-            <p className="text-gray-600 text-sm text-right w-4/6 self-end">
+            <p className="text-gray-300 text-xs text-right w-4/6 self-end font-mono">
               This will the public price of one NFT. Note that the price will be
               in ETH.
             </p>
@@ -286,7 +299,9 @@ export default function NFT() {
                 />
               </div>
               <div
-                className={`basis-1/5 ${!isMaxMintSelected && "text-gray-500"}`}
+                className={`basis-1/5 ${
+                  !isMaxMintSelected && "text-gray-100/40"
+                } text-gray-100 font-mono text-xl text-center`}
               >
                 Max NFTs:
               </div>
@@ -297,20 +312,21 @@ export default function NFT() {
                   isRequired={false}
                   label={isMaxMintSelected ? "Max NFTs" : "Max NFTs (Disabled)"}
                   aria-label="Max NFTs"
+                  className="font-mono"
                   placeholder="1000"
                   value={maxTokens}
                   onValueChange={setMaxTokens}
                 />
               </div>
             </div>
-            <p className="text-gray-600 text-sm text-right w-4/6 self-end">
+            <p className="text-gray-300 text-xs text-right w-4/6 self-end font-mono">
               This it the maximum NFTs that can exist in the contract. Enable
               this to enter a value, and disable it to keep the max NFTs as
               unlimited.
             </p>
           </div>
 
-          <Divider className="my-4 bg-gray-700/60" />
+          <Divider className="my-4 bg-gray-400/60" />
 
           {/* Whitelist Zone */}
           <div className="flex flex-col justify-center items-center w-full space-y-2">
@@ -325,8 +341,8 @@ export default function NFT() {
               </div>
               <div
                 className={`basis-1/5 ${
-                  !isWhiteListSelected && "text-gray-500"
-                }`}
+                  !isWhiteListSelected && "text-gray-100/40"
+                } text-gray-100 font-mono text-xl text-center`}
               >
                 Whitelist:
               </div>
@@ -342,6 +358,7 @@ export default function NFT() {
                   value={whitelistText}
                   onValueChange={setWhitelistText}
                   isInvalid={isInvalid}
+                  className="font-mono"
                   color={isInvalid ? "danger" : "success"}
                   errorMessage={isInvalid && "Please Enter a valid ETH Address"}
                   endContent={
@@ -364,18 +381,20 @@ export default function NFT() {
               whitelist.map((address, index) => (
                 <div
                   key={address}
-                  className="flex flex-row justify-end items-center w-4/6 self-end space-x-4"
+                  className="flex flex-row justify-end items-center w-4/6 self-end space-x-4 "
                 >
-                  <p className="text-gray-600 text-sm text-right ">{address}</p>
+                  <p className="text-gray-300 font-mono text-sm text-right">
+                    {address}
+                  </p>
                   <button
                     onClick={() => deleteWhitelist(index)}
-                    className="text-gray-400 text-sm uppercase"
+                    className="text-gray-300 text-sm uppercase font-mono"
                   >
                     Delete
                   </button>
                 </div>
               ))}
-            <p className="text-gray-600 text-sm text-right w-4/6 self-end">
+            <p className="text-gray-300 text-xs text-right w-4/6 self-end font-mono">
               Add Whitelists into your account.
             </p>
           </div>
@@ -392,10 +411,10 @@ export default function NFT() {
               </div>
               <div
                 className={`basis-1/5 ${
-                  !isWhiteListSelected && "text-gray-500"
-                }`}
+                  !isWhiteListSelected && "text-gray-100/40"
+                } text-gray-100 font-mono text-xl text-center`}
               >
-                Whitelist Price:{" "}
+                Whitelist Price:
               </div>
               <div className="basis-3/5">
                 <Input
@@ -404,6 +423,7 @@ export default function NFT() {
                   aria-label="Whitelist Price"
                   disabled={!isWhiteListSelected}
                   placeholder="0.00"
+                  className="font-mono"
                   value={whitelistPrice}
                   onValueChange={setWhitelistPrice}
                   startContent={
@@ -414,14 +434,14 @@ export default function NFT() {
                 />
               </div>
             </div>
-            <p className="text-gray-600 text-sm text-right w-4/6 self-end">
+            <p className="text-gray-300 text-xs text-right w-4/6 self-end font-mono">
               This will the whitelist price of one NFT. Note that the price will
               be in ETH. The addresses that you add can purchase the NFT at this
               price.
             </p>
           </div>
 
-          <Divider className="my-4 bg-gray-700/60" />
+          <Divider className="my-4 bg-gray-400/60" />
 
           {/* Pre Mint */}
           <div className="flex flex-col justify-center items-center w-full space-y-2">
@@ -430,12 +450,14 @@ export default function NFT() {
                 <Switch
                   defaultSelected={false}
                   aria-label="Enable Mint"
-                  isSelected={isMintSelected}
-                  onValueChange={setMintSelected}
+                  isSelected={isPremintSelected}
+                  onValueChange={setPremintSelected}
                 />
               </div>
               <div
-                className={`basis-1/5 ${!isMintSelected && "text-gray-500"}`}
+                className={`basis-1/5 ${
+                  !isPremintSelected && "text-gray-100/40"
+                } text-gray-100 font-mono text-xl text-center`}
               >
                 Pre Mint:
               </div>
@@ -443,8 +465,9 @@ export default function NFT() {
                 <Input
                   key="mint_crypto"
                   type="number"
-                  label={isMintSelected ? "Pre Mint" : "Pre Mint (Disabled)"}
-                  disabled={!isMintSelected}
+                  label={isPremintSelected ? "Pre Mint" : "Pre Mint (Disabled)"}
+                  disabled={!isPremintSelected}
+                  className="font-mono"
                   placeholder="5000"
                   aria-label="Mint"
                   value={premint}
@@ -452,7 +475,7 @@ export default function NFT() {
                 />
               </div>
             </div>
-            <p className="text-gray-600 text-sm text-right w-4/6 self-end">
+            <p className="text-gray-300 text-xs text-right w-4/6 self-end font-mono">
               You can premint a set of tokens when deploying the contract. This
               will add tokens in your contract in your name. It&apos;s important
               to make sure that you either have pre-minted tokens or you have a
@@ -460,67 +483,30 @@ export default function NFT() {
             </p>
           </div>
 
-          <Divider className="my-4 bg-gray-700/60" />
+          <Divider className="my-4 bg-gray-400/60" />
 
           {/* Choices */}
-          <div className="flex flex-row w-full space-x-2">
-            {/* Burnable */}
-            <div className="flex flex-col justify-start items-center space-y-2 basis-1/4">
-              <Switch
-                defaultSelected={false}
-                isSelected={isBurnableSelected}
-                onValueChange={setBurnableSelected}
-              >
-                <p className="text-gray-100">Burnable</p>
-              </Switch>
-              <p className="text-gray-600 text-sm text-center">
-                If enabled, this allows anyone who owns token to Burn Tokens.
-                Burning tokens is a way to remove tokens from circulation by
-                transferring them to a dead address.
-              </p>
-            </div>
-
-            {/* Pausable */}
-            <div className="flex flex-col justify-start items-center space-y-2 basis-1/4">
-              <Switch
-                defaultSelected
-                isSelected={isPausableSelected}
-                onValueChange={setPausableSelected}
-              >
-                <p className="text-gray-100">Pausable</p>
-              </Switch>
-              <p className="text-gray-600 text-sm text-center">
-                If enabled, this allows you, the person who deploys, to have the
-                ability to pause main transactions of the contract. This is
-                useful if you want to stop all transactions in case of a bug or
-                a hack.
-              </p>
-            </div>
-
-            {/* Supply Tracking */}
-            <div className="flex flex-col justify-start items-center space-y-2 basis-1/4">
-              <Switch
-                defaultSelected={false}
-                isSelected={isSupplyTrackingSelected}
-                onValueChange={setSupplyTrackingSelected}
-              >
-                <p className="text-gray-100">Supply Tracking</p>
-              </Switch>
-              <p className="text-gray-600 text-sm text-center">
-                If enabled, this will track the total supply per ID.
-              </p>
-            </div>
-
+          <div className="flex flex-row w-full space-x-2 justify-center items-center">
             {/* URI Storage */}
-            <div className="flex flex-col justify-start items-center space-y-2 basis-1/4">
+            <div className="w-1/2 flex flex-col justify-center items-center space-y-2">
               <Switch
                 defaultSelected
                 isSelected={isURISelected}
                 onValueChange={setURISelected}
               >
-                <p className="text-gray-100">URI Storage</p>
+                <p
+                  className={`${
+                    isURISelected ? "text-gray-100" : "text-gray-100/40"
+                  }  font-mono text-xl`}
+                >
+                  URI Storage
+                </p>
               </Switch>
-              <p className="text-gray-600 text-sm text-center">
+              <p
+                className={`${
+                  isURISelected ? "text-gray-300" : "text-gray-300/40"
+                }  font-mono text-sm text-center`}
+              >
                 If enabled, this allows you, the person who deploys, to have a
                 way to change the URI address. Enabling this will disable Max
                 NFTs.
@@ -528,17 +514,41 @@ export default function NFT() {
             </div>
           </div>
 
-          {/* Submit */}
-          <div className="pb-24 w-full flex justify-center items-center">
-            <Button
-              onClick={(e) => submit(e)}
-              type="submit"
-              size="lg"
-              color="primary"
-              variant="shadow"
-            >
-              Submit
-            </Button>
+          {/* Submit Button */}
+          <div className="w-full flex flex-col justify-center items-center space-y-3">
+            {/* Wallet not Connected */}
+            {isDisconnected && <ConnectButton />}
+
+            {/* Connection ongoing */}
+            {isConnecting && <p>Connecting, please check your wallet...</p>}
+
+            {/* Connected */}
+            {address && (
+              <>
+                <Button
+                  type="submit"
+                  onClick={(e) => submit(e)}
+                  size="lg"
+                  isLoading={loading}
+                  color="primary"
+                  variant="shadow"
+                  className="uppercase"
+                >
+                  Submit
+                </Button>
+                <p className="font-mono text-gray-200 uppercase">
+                  {status.includes("DEPLOYED") ? (
+                    <Link
+                      href={`https://sepolia.etherscan.io/address/${deployContractAddress}`}
+                    >
+                      {status}
+                    </Link>
+                  ) : (
+                    status
+                  )}
+                </p>
+              </>
+            )}
           </div>
         </form>
       </div>

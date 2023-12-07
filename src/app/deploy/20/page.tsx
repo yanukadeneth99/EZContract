@@ -153,6 +153,7 @@ export default function Page() {
       {/* Body */}
       <div className="w-3/4 flex flex-col justify-start items-center p-3 backdrop-blur-md rounded-2xl backdrop-brightness-75 overflow-x-hidden overflow-y-scroll">
         {visible && <Confetti />}
+
         {/* Form */}
         <form className="flex flex-col justify-center items-center w-full p-3 space-y-12">
           {/* Name */}
