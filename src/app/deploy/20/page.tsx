@@ -122,6 +122,13 @@ export default function Page() {
           setStatus("Deployed to: " + res.contractAddress);
           setDeployContractAddress(res.contractAddress as `0x${string}`);
           setLoading(false);
+          setName("");
+          setSymbol("");
+          setPremint("");
+          setMintSelected(false);
+          setMintableSelected(false);
+          setBurnableSelected(false);
+          setPausableSelected(false);
         });
     } catch (error) {
       console.error(error);
@@ -131,23 +138,26 @@ export default function Page() {
   }
 
   return (
-    <div className="w-full h-full flex flex-col justify-center items-center">
+    <div className="w-screen h-screen flex flex-col justify-start items-center py-12 space-y-12">
       {/* Header */}
-      <div className="w-full flex justify-start items-center p-6 pt-12">
+      <div className="w-1/2 flex justify-center items-center space-x-6 p-3 backdrop-blur-md rounded-2xl">
         <BackButton />
+        <h1 className="text-4xl font-mono text-gray-200 font-bold">
+          Create your own Fungible Token
+        </h1>
       </div>
 
       {/* Body */}
-      <div className="w-3/4 flex flex-col justify-start items-center p-12 space-y-24">
-        <h1 className="text-4xl font-bold">Create your own Fungible Token</h1>
-
+      <div className="w-3/4 flex flex-col justify-start items-center p-3 backdrop-blur-md rounded-2xl backdrop-brightness-75 overflow-x-hidden overflow-y-scroll">
         {/* Form */}
         <form className="flex flex-col justify-center items-center w-full p-3 space-y-12">
           {/* Name */}
           <div className="flex flex-col justify-center items-center w-full space-y-2">
             <div className="flex flex-row justify-center items-center w-full">
               <div className="basis-1/5"></div>
-              <div className="basis-1/5">Name: </div>
+              <div className="basis-1/5 text-gray-100 font-mono text-xl text-center">
+                Name:
+              </div>
               <div className="basis-3/5">
                 <Input
                   key="name_crypto"
@@ -156,6 +166,7 @@ export default function Page() {
                   label="Name"
                   placeholder="Bitcoin"
                   aria-label="Name"
+                  className="font-mono"
                   value={name}
                   onValueChange={setName}
                   isInvalid={nameError !== ""}
@@ -164,7 +175,7 @@ export default function Page() {
                 />
               </div>
             </div>
-            <p className="text-gray-600 text-sm text-right w-4/6 self-end">
+            <p className="text-gray-300 text-xs text-right w-4/6 self-end font-mono">
               Enter the name you want to call your Cryptocurrency. This name
               will be what the Cryptocurrency will be called on the blockchain.
             </p>
@@ -174,7 +185,9 @@ export default function Page() {
           <div className="flex flex-col justify-center items-center w-full space-y-2">
             <div className="flex flex-row justify-center items-center w-full">
               <div className="basis-1/5"></div>
-              <div className="basis-1/5">Symbol: </div>
+              <div className="basis-1/5 text-gray-100 font-mono text-xl text-center">
+                Symbol:
+              </div>
               <div className="basis-3/5">
                 <Input
                   key="symbol_crypto"
@@ -183,6 +196,7 @@ export default function Page() {
                   label="Symbol"
                   placeholder="BTC"
                   aria-label="Symbol"
+                  className="font-mono"
                   value={symbol}
                   onValueChange={setSymbol}
                   isInvalid={symbolError !== ""}
@@ -193,7 +207,7 @@ export default function Page() {
                 />
               </div>
             </div>
-            <p className="text-gray-600 text-sm text-right w-4/6 self-end">
+            <p className="text-gray-300 text-xs text-right w-4/6 self-end font-mono">
               This will be the Symbol of your Cryptocurrency. This will be used
               on the blockchain to identify your Cryptocurrency.
             </p>
@@ -202,7 +216,7 @@ export default function Page() {
           {/* Pre Mint */}
           <div className="flex flex-col justify-center items-center w-full space-y-2">
             <div className="flex flex-row justify-center items-center w-full">
-              <div className="basis-1/5  flex justify-end items-center pr-12">
+              <div className="basis-1/5 flex justify-end items-center pr-12">
                 <Switch
                   aria-label="Enable Mint"
                   isSelected={isMintSelected}
@@ -210,7 +224,9 @@ export default function Page() {
                 />
               </div>
               <div
-                className={`basis-1/5 ${!isMintSelected && "text-gray-500"}`}
+                className={`basis-1/5 ${
+                  !isMintSelected && "text-gray-100/40"
+                } text-gray-100 font-mono text-xl text-center`}
               >
                 Pre Mint:
               </div>
@@ -221,13 +237,14 @@ export default function Page() {
                   label={isMintSelected ? "Pre Mint" : "Pre Mint (Disabled)"}
                   disabled={!isMintSelected}
                   placeholder="5000"
+                  className="font-mono"
                   aria-label="Mint"
                   value={premint}
                   onValueChange={setPremint}
                 />
               </div>
             </div>
-            <p className="text-gray-600 text-sm text-right w-4/6 self-end">
+            <p className="text-gray-300 text-xs text-right w-4/6 self-end font-mono">
               You can premint a set of tokens when deploying the contract. This
               will add tokens in your contract in your name. It&apos;s important
               to make sure that you either have pre-minted tokens or you have a
@@ -238,7 +255,7 @@ export default function Page() {
           <Divider className="my-4 bg-gray-700/60" />
 
           {/* Choices */}
-          <div className="flex flex-row w-full">
+          <div className="flex flex-row w-full space-x-2">
             {/* Mintable */}
             <div className="flex flex-col justify-start items-center space-y-2 basis-1/3">
               <Switch
@@ -246,9 +263,19 @@ export default function Page() {
                 isSelected={isMintableSelected}
                 onValueChange={setMintableSelected}
               >
-                <p className="text-gray-100">Mintable</p>
+                <p
+                  className={`${
+                    isMintableSelected ? "text-gray-100" : "text-gray-100/40"
+                  }  font-mono text-xl`}
+                >
+                  Mintable
+                </p>
               </Switch>
-              <p className="text-gray-600 text-sm text-center">
+              <p
+                className={`${
+                  isMintableSelected ? "text-gray-300" : "text-gray-300/40"
+                }  font-mono text-sm text-center`}
+              >
                 If enabled, this allows you, the person who deploys, to have the
                 ability to mint more tokens.
               </p>
@@ -261,9 +288,19 @@ export default function Page() {
                 isSelected={isBurnableSelected}
                 onValueChange={setBurnableSelected}
               >
-                <p className="text-gray-100">Burnable</p>
+                <p
+                  className={`${
+                    isBurnableSelected ? "text-gray-100" : "text-gray-100/40"
+                  }  font-mono text-xl`}
+                >
+                  Burnable
+                </p>
               </Switch>
-              <p className="text-gray-600 text-sm text-center">
+              <p
+                className={`${
+                  isBurnableSelected ? "text-gray-300" : "text-gray-300/40"
+                }  font-mono text-sm text-center`}
+              >
                 If enabled, this allows anyone who owns token to Burn Tokens.
                 Burning tokens is a way to remove tokens from circulation by
                 transferring them to a dead address.
@@ -277,9 +314,19 @@ export default function Page() {
                 isSelected={isPausableSelected}
                 onValueChange={setPausableSelected}
               >
-                <p className="text-gray-100">Pausable</p>
+                <p
+                  className={`${
+                    isPausableSelected ? "text-gray-100" : "text-gray-100/40"
+                  }  font-mono text-xl`}
+                >
+                  Pausable
+                </p>
               </Switch>
-              <p className="text-gray-600 text-sm text-center">
+              <p
+                className={`${
+                  isPausableSelected ? "text-gray-300" : "text-gray-300/40"
+                }  font-mono text-sm text-center`}
+              >
                 If enabled, this allows you, the person who deploys, to have the
                 ability to pause main transactions of the contract. This is
                 useful if you want to stop all transactions in case of a bug or
@@ -288,8 +335,8 @@ export default function Page() {
             </div>
           </div>
 
-          {/* Submit Form */}
-          <div className="pb-24 w-full flex flex-col justify-center items-center space-y-3">
+          {/* Submit Button */}
+          <div className="w-full flex flex-col justify-center items-center space-y-3">
             {/* Wallet not Connected */}
             {isDisconnected && <ConnectButton />}
 
@@ -306,11 +353,12 @@ export default function Page() {
                   isLoading={loading}
                   color="primary"
                   variant="shadow"
+                  className="uppercase"
                 >
                   Submit
                 </Button>
-                <p>
-                  {status.includes("Deployed") ? (
+                <p className="font-mono text-gray-200 uppercase">
+                  {status.includes("DEPLOYED") ? (
                     <Link
                       href={`https://sepolia.etherscan.io/address/${deployContractAddress}`}
                     >
