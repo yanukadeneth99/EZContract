@@ -1,4 +1,4 @@
-import { ERC20DataINT } from "../interface/ERC20Data";
+import { ERC20DataINT } from "../interface/DataInterface";
 
 export default function getContractName(data: ERC20DataINT): string {
   let word = "ERC20";
