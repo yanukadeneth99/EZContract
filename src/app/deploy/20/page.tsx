@@ -8,6 +8,7 @@ import { useState } from "react";
 import { createPublicClient, createWalletClient, custom, http } from "viem";
 import { sepolia } from "viem/chains";
 
+import Confetti from "@/components/Confetti";
 import getContractName from "../../functions/GetERC20";
 
 import { ERC20DataINT } from "../../interface/ERC20Data";
@@ -35,6 +36,7 @@ export default function Page() {
   const { disconnect } = useDisconnect();
 
   const [loading, setLoading] = useState<boolean>(false);
+  const [visible, setVisible] = useState<boolean>(false);
 
   async function submit(
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -122,6 +124,7 @@ export default function Page() {
           setStatus("Deployed to: " + res.contractAddress);
           setDeployContractAddress(res.contractAddress as `0x${string}`);
           setLoading(false);
+          setVisible(true);
           setName("");
           setSymbol("");
           setPremint("");
@@ -149,6 +152,7 @@ export default function Page() {
 
       {/* Body */}
       <div className="w-3/4 flex flex-col justify-start items-center p-3 backdrop-blur-md rounded-2xl backdrop-brightness-75 overflow-x-hidden overflow-y-scroll">
+        {visible && <Confetti />}
         {/* Form */}
         <form className="flex flex-col justify-center items-center w-full p-3 space-y-12">
           {/* Name */}
