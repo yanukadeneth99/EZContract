@@ -38,7 +38,6 @@ export default function Page() {
 
   // Hooks
   const { address, isConnecting, isDisconnected } = useAccount();
-  const { disconnect } = useDisconnect();
 
   const [loading, setLoading] = useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
@@ -171,27 +170,27 @@ export default function Page() {
   return (
     <div className="w-screen h-screen flex flex-col justify-start items-center py-12 space-y-12">
       {/* Header */}
-      <div className="w-1/2 flex justify-center items-center space-x-6 p-3 backdrop-blur-md rounded-2xl">
+      <div className="w-11/12 md:w-10/12 lg:w-3/4 flex flex-col lg:flex-row justify-center items-center space-y-2 lg:space-y-0 lg:space-x-6 p-3 backdrop-blur-md rounded-2xl">
         <BackButton />
-        <h1 className="text-4xl font-mono text-gray-200 font-bold">
+        <h1 className="text-xl md:text-2xl lg:text-4xl text-center font-mono text-gray-200 font-bold">
           Create your own Fungible Token
         </h1>
       </div>
 
       {/* Body */}
-      <div className="w-3/4 flex flex-col justify-start items-center p-3 backdrop-blur-md rounded-2xl backdrop-brightness-75 overflow-x-hidden overflow-y-scroll">
+      <div className="w-11/12 md:w-10/12 lg:w-3/4 flex flex-col justify-start items-center p-3 backdrop-blur-md rounded-2xl backdrop-brightness-75 overflow-x-hidden overflow-y-scroll">
         {visible && <Confetti />}
 
         {/* Form */}
         <form className="flex flex-col justify-center items-center w-full p-3 space-y-12">
           {/* Name */}
           <div className="flex flex-col justify-center items-center w-full space-y-2">
-            <div className="flex flex-row justify-center items-center w-full">
+            <div className="flex flex-col lg:flex-row justify-center items-center w-full">
               <div className="basis-1/5"></div>
-              <div className="basis-1/5 text-gray-100 font-mono text-xl text-center">
+              <div className="basis-1/5 text-gray-100 font-mono text-lg lg:text-xl text-center">
                 Name:
               </div>
-              <div className="basis-3/5">
+              <div className="basis-3/5 w-full">
                 <Input
                   key="name_crypto"
                   type="text"
@@ -208,7 +207,7 @@ export default function Page() {
                 />
               </div>
             </div>
-            <p className="text-gray-300 text-xs text-right w-4/6 self-end font-mono">
+            <p className="text-gray-300 text-xs text-center lg:text-right w-full lg:w-4/6 lg:self-end font-mono">
               Enter the name you want to call your Cryptocurrency. This name
               will be what the Cryptocurrency will be called on the blockchain.
             </p>
@@ -216,12 +215,12 @@ export default function Page() {
 
           {/* Symbol */}
           <div className="flex flex-col justify-center items-center w-full space-y-2">
-            <div className="flex flex-row justify-center items-center w-full">
+            <div className="flex flex-col lg:flex-row justify-center items-center w-full">
               <div className="basis-1/5"></div>
-              <div className="basis-1/5 text-gray-100 font-mono text-xl text-center">
+              <div className="basis-1/5 text-gray-100 font-mono text-lg lg:text-xl text-center">
                 Symbol:
               </div>
-              <div className="basis-3/5">
+              <div className="basis-3/5 w-full">
                 <Input
                   key="symbol_crypto"
                   isRequired
@@ -240,16 +239,16 @@ export default function Page() {
                 />
               </div>
             </div>
-            <p className="text-gray-300 text-xs text-right w-4/6 self-end font-mono">
-              This will be the Symbol of your Cryptocurrency. This will be used
-              on the blockchain to identify your Cryptocurrency.
+            <p className="text-gray-300 text-xs text-center lg:text-right w-full lg:w-4/6 lg:self-end font-mono">
+              This will be the Symbol of your Cryptocurrency used on the
+              blockchain to identify your Cryptocurrency.
             </p>
           </div>
 
           {/* Pre Mint */}
           <div className="flex flex-col justify-center items-center w-full space-y-2">
-            <div className="flex flex-row justify-center items-center w-full">
-              <div className="basis-1/5 flex justify-end items-center pr-12">
+            <div className="flex flex-col lg:flex-row justify-center items-center w-full">
+              <div className="basis-1/5 flex justify-end items-center lg:pr-12">
                 <Switch
                   aria-label="Enable Mint"
                   isSelected={isMintSelected}
@@ -258,12 +257,12 @@ export default function Page() {
               </div>
               <div
                 className={`basis-1/5 ${
-                  !isMintSelected && "text-gray-100/40"
-                } text-gray-100 font-mono text-xl text-center`}
+                  !isMintSelected ? "text-gray-100/40" : "text-gray-100"
+                } font-mono text-lg lg:text-xl text-center`}
               >
                 Pre Mint:
               </div>
-              <div className="basis-3/5">
+              <div className="basis-3/5 w-full">
                 <Input
                   key="mint_crypto"
                   type="number"
@@ -277,7 +276,11 @@ export default function Page() {
                 />
               </div>
             </div>
-            <p className="text-gray-300 text-xs text-right w-4/6 self-end font-mono">
+            <p
+              className={`${
+                !isMintSelected ? "text-gray-100/40" : "text-gray-100"
+              } text-xs text-center lg:text-right w-full lg:w-4/6 lg:self-end font-mono`}
+            >
               You can premint a set of tokens when deploying the contract. This
               will add tokens in your contract in your name. It&apos;s important
               to make sure that you either have pre-minted tokens or you have a
@@ -285,10 +288,10 @@ export default function Page() {
             </p>
           </div>
 
-          <Divider className="my-4 bg-gray-700/60" />
+          <Divider className="my-4 bg-gray-400/60" />
 
           {/* Choices */}
-          <div className="flex flex-row w-full space-x-2">
+          <div className="flex flex-col lg:flex-row w-full space-y-12 lg:space-y-0 lg:space-x-2">
             {/* Mintable */}
             <div className="flex flex-col justify-start items-center space-y-2 basis-1/3">
               <Switch
@@ -390,7 +393,7 @@ export default function Page() {
                 >
                   Submit
                 </Button>
-                <p className="font-mono text-gray-200 uppercase">
+                <p className="font-mono text-gray-200 uppercase text-xs md:text-md">
                   {status.toUpperCase().includes("DEPLOYED") ? (
                     <Link
                       target="_blank"

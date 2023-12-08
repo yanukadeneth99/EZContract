@@ -275,27 +275,27 @@ export default function Page() {
   return (
     <div className="w-screen h-screen flex flex-col justify-start items-center py-12 space-y-12">
       {/* Header */}
-      <div className="w-1/2 flex justify-center items-center space-x-6 p-3 backdrop-blur-md rounded-2xl">
+      <div className="w-11/12 md:w-10/12 lg:w-3/4 flex flex-col lg:flex-row justify-center items-center space-y-2 lg:space-y-0 lg:space-x-6 p-3 backdrop-blur-md rounded-2xl">
         <BackButton />
-        <h1 className="text-3xl font-mono text-gray-200 font-bold">
+        <h1 className="text-xl md:text-2xl lg:text-4xl text-center font-mono text-gray-200 font-bold">
           Create your own Non-Fungible Token
         </h1>
       </div>
 
       {/* Body */}
-      <div className="w-3/4 flex flex-col justify-start items-center p-3 backdrop-blur-md rounded-2xl backdrop-brightness-75 overflow-x-hidden overflow-y-scroll">
+      <div className="w-11/12 md:w-10/12 lg:w-3/4 flex flex-col justify-start items-center p-3 backdrop-blur-md rounded-2xl backdrop-brightness-75 overflow-x-hidden overflow-y-scroll">
         {visible && <Confetti />}
 
         {/* Form */}
         <form className="flex flex-col justify-center items-center w-full p-3 space-y-12">
           {/* Name */}
           <div className="flex flex-col justify-center items-center w-full space-y-2">
-            <div className="flex flex-row justify-center items-center w-full">
+            <div className="flex flex-col lg:flex-row justify-center items-center w-full">
               <div className="basis-1/5"></div>
-              <div className="basis-1/5 text-gray-100 font-mono text-xl text-center">
+              <div className="basis-1/5 text-gray-100 font-mono text-lg lg:text-xl text-center">
                 Name:
               </div>
-              <div className="basis-3/5">
+              <div className="basis-3/5 w-full">
                 <Input
                   key="name_crypto"
                   isRequired
@@ -312,7 +312,7 @@ export default function Page() {
                 />
               </div>
             </div>
-            <p className="text-gray-300 text-xs text-right w-4/6 self-end font-mono">
+            <p className="text-gray-300 text-xs text-center lg:text-right w-full lg:w-4/6 lg:self-end font-mono">
               Enter the name you want to call your NFT. This name will be what
               the NFT will be called on the blockchain.
             </p>
@@ -320,12 +320,12 @@ export default function Page() {
 
           {/* Symbol */}
           <div className="flex flex-col justify-center items-center w-full space-y-2">
-            <div className="flex flex-row justify-center items-center w-full">
+            <div className="flex flex-col lg:flex-row justify-center items-center w-full">
               <div className="basis-1/5"></div>
-              <div className="basis-1/5 text-gray-100 font-mono text-xl text-center">
+              <div className="basis-1/5 text-gray-100 font-mono text-lg lg:text-xl text-center">
                 Symbol:
               </div>
-              <div className="basis-3/5">
+              <div className="basis-3/5 w-full">
                 <Input
                   key="symbol_crypto"
                   isRequired
@@ -344,7 +344,7 @@ export default function Page() {
                 />
               </div>
             </div>
-            <p className="text-gray-300 text-xs text-right w-4/6 self-end font-mono">
+            <p className="text-gray-300 text-xs text-center lg:text-right w-full lg:w-4/6 lg:self-end font-mono">
               This will be the Symbol of your NFT. This will be used on the
               blockchain to identify your NFT.
             </p>
@@ -352,12 +352,12 @@ export default function Page() {
 
           {/* Base URI */}
           <div className="flex flex-col justify-center items-center w-full space-y-2">
-            <div className="flex flex-row justify-center items-center w-full">
+            <div className="flex flex-col lg:flex-row justify-center items-center w-full">
               <div className="basis-1/5"></div>
-              <div className="basis-1/5 text-gray-100 font-mono text-xl text-center">
+              <div className="basis-1/5 text-gray-100 font-mono text-lg lg:text-xl text-center">
                 Base URI:
               </div>
-              <div className="basis-3/5">
+              <div className="basis-3/5 w-full">
                 <Input
                   key="baseuri_crypto"
                   isRequired
@@ -376,7 +376,7 @@ export default function Page() {
                 />
               </div>
             </div>
-            <p className="text-gray-300 text-xs text-right w-4/6 self-end font-mono">
+            <p className="text-gray-300 text-xs text-center lg:text-right w-full lg:w-4/6 lg:self-end font-mono">
               This will the base URI for the location that contains your meta
               data files. Recommended to use IPFS. Make sure to have the
               &quot;/&quot; at the end of this URI.
@@ -385,12 +385,12 @@ export default function Page() {
 
           {/* Public Price */}
           <div className="flex flex-col justify-center items-center w-full space-y-2">
-            <div className="flex flex-row justify-center items-center w-full">
+            <div className="flex flex-col lg:flex-row justify-center items-center w-full">
               <div className="basis-1/5"></div>
-              <div className="basis-1/5 text-gray-100 font-mono text-xl text-center">
+              <div className="basis-1/5 text-gray-100 font-mono text-lg lg:text-xl text-center">
                 Public Price:
               </div>
-              <div className="basis-3/5">
+              <div className="basis-3/5 w-full">
                 <Input
                   type="number"
                   min={0}
@@ -409,22 +409,22 @@ export default function Page() {
                   }
                   startContent={
                     <div className="pointer-events-none flex items-center">
-                      <span className="text-default-400 text-small">ETH</span>
+                      <span className="text-default-400 text-small">XRP</span>
                     </div>
                   }
                 />
               </div>
             </div>
-            <p className="text-gray-300 text-xs text-right w-4/6 self-end font-mono">
+            <p className="text-gray-300 text-xs text-center lg:text-right w-full lg:w-4/6 lg:self-end font-mono">
               This will the public price of one NFT. Note that the price will be
-              in ETH.
+              in XRP.
             </p>
           </div>
 
           {/* Max Tokens */}
           <div className="flex flex-col justify-center items-center w-full space-y-2">
-            <div className="flex flex-row justify-center items-center w-full">
-              <div className="basis-1/5 flex justify-end items-center pr-12">
+            <div className="flex flex-col lg:flex-row justify-center items-center w-full">
+              <div className="basis-1/5 flex justify-end items-center lg:pr-12">
                 <Switch
                   defaultSelected={false}
                   aria-label="Enable Mint"
@@ -434,12 +434,12 @@ export default function Page() {
               </div>
               <div
                 className={`basis-1/5 ${
-                  !isMaxMintSelected && "text-gray-100/40"
-                } text-gray-100 font-mono text-xl text-center`}
+                  !isMaxMintSelected ? "text-gray-100/40" : "text-gray-100"
+                } font-mono text-lg lg:text-xl text-center`}
               >
                 Max NFTs:
               </div>
-              <div className="basis-3/5">
+              <div className="basis-3/5 w-full">
                 <Input
                   type="number"
                   min={0}
@@ -454,7 +454,11 @@ export default function Page() {
                 />
               </div>
             </div>
-            <p className="text-gray-300 text-xs text-right w-4/6 self-end font-mono">
+            <p
+              className={`${
+                !isMaxMintSelected ? "text-gray-100/40" : "text-gray-100"
+              } text-xs text-center lg:text-right w-full lg:w-4/6 lg:self-end font-mono`}
+            >
               This it the maximum NFTs that can exist in the contract. Enable
               this to enter a value, and disable it to keep the max NFTs as
               unlimited.
@@ -465,8 +469,8 @@ export default function Page() {
 
           {/* Whitelist Zone */}
           <div className="flex flex-col justify-center items-center w-full space-y-2">
-            <div className="flex flex-row justify-center items-center w-full">
-              <div className="basis-1/5 flex justify-end items-center pr-12">
+            <div className="flex flex-col lg:flex-row justify-center items-center w-full">
+              <div className="basis-1/5 flex justify-end items-center lg:pr-12">
                 <Switch
                   defaultSelected={false}
                   aria-label="Enable Mint"
@@ -476,12 +480,12 @@ export default function Page() {
               </div>
               <div
                 className={`basis-1/5 ${
-                  !isWhiteListSelected && "text-gray-100/40"
-                } text-gray-100 font-mono text-xl text-center`}
+                  !isWhiteListSelected ? "text-gray-100/40" : "text-gray-100"
+                } font-mono text-lg lg:text-xl text-center`}
               >
                 Whitelist:
               </div>
-              <div className="basis-3/5 flex flex-row justify-center items-center">
+              <div className="basis-3/5 w-full flex flex-row justify-center items-center">
                 <Input
                   key="whitelist_crypto"
                   type="text"
@@ -516,27 +520,31 @@ export default function Page() {
               whitelist.map((address, index) => (
                 <div
                   key={address}
-                  className="flex flex-row justify-end items-center w-4/6 self-end space-x-4 "
+                  className="flex flex-col lg:flex-row justify-center lg:justify-end items-center w-full lg:w-4/6 self-end lg:space-x-4 pt-3 lg:pt-0"
                 >
-                  <p className="text-gray-300 font-mono text-sm text-right">
+                  <p className="text-gray-300 font-mono text-xs lg:text-sm text-right">
                     {address}
                   </p>
                   <button
                     onClick={() => deleteWhitelist(index)}
-                    className="text-gray-300 text-sm uppercase font-mono"
+                    className="text-gray-300 text-xs md:text-sm uppercase font-mono"
                   >
                     Delete
                   </button>
                 </div>
               ))}
-            <p className="text-gray-300 text-xs text-right w-4/6 self-end font-mono">
+            <p
+              className={`${
+                !isWhiteListSelected ? "text-gray-100/40" : "text-gray-100"
+              } text-xs text-center lg:text-right w-full lg:w-4/6 lg:self-end font-mono`}
+            >
               Add Whitelists into your account.
             </p>
           </div>
 
           <div className="flex flex-col justify-center items-center w-full space-y-2">
-            <div className="flex flex-row justify-center items-center w-full">
-              <div className="basis-1/5 flex justify-end items-center pr-12">
+            <div className="flex flex-col lg:flex-row justify-center items-center w-full">
+              <div className="basis-1/5 flex justify-end items-center lg:pr-12">
                 <Switch
                   defaultSelected={false}
                   aria-label="Enable Mint"
@@ -546,12 +554,12 @@ export default function Page() {
               </div>
               <div
                 className={`basis-1/5 ${
-                  !isWhiteListSelected && "text-gray-100/40"
-                } text-gray-100 font-mono text-xl text-center`}
+                  !isWhiteListSelected ? "text-gray-100/40" : "text-gray-100"
+                } font-mono text-lg lg:text-xl text-center`}
               >
                 Whitelist Price:
               </div>
-              <div className="basis-3/5">
+              <div className="basis-3/5 w-full">
                 <Input
                   type="number"
                   key="whitelist_price_crypto"
@@ -569,7 +577,11 @@ export default function Page() {
                 />
               </div>
             </div>
-            <p className="text-gray-300 text-xs text-right w-4/6 self-end font-mono">
+            <p
+              className={`${
+                !whitelistPrice ? "text-gray-100/40" : "text-gray-100"
+              } text-xs text-center lg:text-right w-full lg:w-4/6 lg:self-end font-mono`}
+            >
               This will the whitelist price of one NFT. Note that the price will
               be in ETH. The addresses that you add can purchase the NFT at this
               price.
@@ -580,8 +592,8 @@ export default function Page() {
 
           {/* Pre Mint */}
           <div className="flex flex-col justify-center items-center w-full space-y-2">
-            <div className="flex flex-row justify-center items-center w-full">
-              <div className="basis-1/5  flex justify-end items-center pr-12">
+            <div className="flex flex-col lg:flex-row justify-center items-center w-full">
+              <div className="basis-1/5 flex justify-end items-center lg:pr-12">
                 <Switch
                   defaultSelected={false}
                   aria-label="Enable Mint"
@@ -591,12 +603,12 @@ export default function Page() {
               </div>
               <div
                 className={`basis-1/5 ${
-                  !isPremintSelected && "text-gray-100/40"
-                } text-gray-100 font-mono text-xl text-center`}
+                  !isPremintSelected ? "text-gray-100/40" : "text-gray-100"
+                } font-mono text-lg lg:text-xl text-center`}
               >
                 Pre Mint:
               </div>
-              <div className="basis-3/5">
+              <div className="basis-3/5 w-full">
                 <Input
                   key="mint_crypto"
                   type="number"
@@ -611,7 +623,11 @@ export default function Page() {
                 />
               </div>
             </div>
-            <p className="text-gray-300 text-xs text-right w-4/6 self-end font-mono">
+            <p
+              className={`${
+                !isPremintSelected ? "text-gray-100/40" : "text-gray-100"
+              } text-xs text-center lg:text-right w-full lg:w-4/6 lg:self-end font-mono`}
+            >
               You can premint a set of tokens when deploying the contract. This
               will add tokens in your contract in your name. It&apos;s important
               to make sure that you either have pre-minted tokens or you have a
@@ -622,9 +638,9 @@ export default function Page() {
           <Divider className="my-4 bg-gray-400/60" />
 
           {/* Choices */}
-          <div className="flex flex-row w-full space-x-2 justify-center items-center">
+          <div className="flex flex-col justify-center items-center lg:flex-row w-full space-y-12 lg:space-y-0 lg:space-x-2">
             {/* URI Storage */}
-            <div className="w-1/2 flex flex-col justify-center items-center space-y-2">
+            <div className="w-full lg:w-1/2 flex flex-col justify-center items-center space-y-2">
               <Switch
                 defaultSelected
                 isSelected={isURISelected}
@@ -672,7 +688,7 @@ export default function Page() {
                 >
                   Submit
                 </Button>
-                <p className="font-mono text-gray-200 uppercase">
+                <p className="font-mono text-gray-200 uppercase text-xs md:text-md">
                   {status.toUpperCase().includes("DEPLOYED") ? (
                     <Link
                       target="_blank"
