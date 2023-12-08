@@ -5,8 +5,13 @@ import { Button, Divider, Input, Switch, Link } from "@nextui-org/react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount, useDisconnect } from "wagmi";
 import { useState } from "react";
-import { createPublicClient, createWalletClient, custom, http } from "viem";
-import { sepolia } from "viem/chains";
+import {
+  createPublicClient,
+  createWalletClient,
+  custom,
+  http,
+  defineChain,
+} from "viem";
 
 import Confetti from "@/components/Confetti";
 import getContractName from "../../functions/GetERC20";
@@ -84,14 +89,37 @@ export default function Page() {
       method: "eth_requestAccounts",
     });
 
+    const xrpsidechain = defineChain({
+      id: 1440002,
+      name: "XRPL EVM Sidechain",
+      network: "XRPL EVM Sidechain",
+      nativeCurrency: {
+        decimals: 18,
+        name: "XRPL EVM Sidechain",
+        symbol: "XRP",
+      },
+      rpcUrls: {
+        public: { http: ["https://rpc-evm-sidechain.xrpl.org"] },
+        default: { http: ["https://rpc-evm-sidechain.xrpl.org"] },
+      },
+      blockExplorers: {
+        default: { name: "XRP Ledger", url: "https://evm-sidechain.xrpl.org" },
+        etherscan: {
+          name: "XRP Ledger",
+          url: "https://evm-sidechain.xrpl.org",
+        },
+      },
+      testnet: true,
+    });
+
     // eslint-disable-next-line no-use-before-define
     const walletClient = createWalletClient({
-      chain: sepolia,
+      chain: xrpsidechain,
       transport: custom(window.ethereum),
     });
 
     const publicClient = createPublicClient({
-      chain: sepolia,
+      chain: xrpsidechain,
       transport: http(),
     });
 
@@ -363,9 +391,10 @@ export default function Page() {
                   Submit
                 </Button>
                 <p className="font-mono text-gray-200 uppercase">
-                  {status.includes("DEPLOYED") ? (
+                  {status.toUpperCase().includes("DEPLOYED") ? (
                     <Link
-                      href={`https://sepolia.etherscan.io/address/${deployContractAddress}`}
+                      target="_blank"
+                      href={`https://evm-sidechain.xrpl.org/address/${deployContractAddress}`}
                     >
                       {status}
                     </Link>

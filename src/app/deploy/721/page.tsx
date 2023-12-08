@@ -6,7 +6,13 @@ import { useEffect, useMemo, useState } from "react";
 import Confetti from "@/components/Confetti";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount, useDisconnect } from "wagmi";
-import { createPublicClient, createWalletClient, custom, http } from "viem";
+import {
+  createPublicClient,
+  createWalletClient,
+  custom,
+  defineChain,
+  http,
+} from "viem";
 import { sepolia } from "viem/chains";
 
 import { ERC721DataINT } from "../../interface/DataInterface";
@@ -168,14 +174,37 @@ export default function Page() {
       method: "eth_requestAccounts",
     });
 
+    const xrpsidechain = defineChain({
+      id: 1440002,
+      name: "XRPL EVM Sidechain",
+      network: "XRPL EVM Sidechain",
+      nativeCurrency: {
+        decimals: 18,
+        name: "XRPL EVM Sidechain",
+        symbol: "XRP",
+      },
+      rpcUrls: {
+        public: { http: ["https://rpc-evm-sidechain.xrpl.org"] },
+        default: { http: ["https://rpc-evm-sidechain.xrpl.org"] },
+      },
+      blockExplorers: {
+        default: { name: "XRP Ledger", url: "https://evm-sidechain.xrpl.org" },
+        etherscan: {
+          name: "XRP Ledger",
+          url: "https://evm-sidechain.xrpl.org",
+        },
+      },
+      testnet: true,
+    });
+
     // eslint-disable-next-line no-use-before-define
     const walletClient = createWalletClient({
-      chain: sepolia,
+      chain: xrpsidechain,
       transport: custom(window.ethereum),
     });
 
     const publicClient = createPublicClient({
-      chain: sepolia,
+      chain: xrpsidechain,
       transport: http(),
     });
 
@@ -646,7 +675,8 @@ export default function Page() {
                 <p className="font-mono text-gray-200 uppercase">
                   {status.toUpperCase().includes("DEPLOYED") ? (
                     <Link
-                      href={`https://sepolia.etherscan.io/address/${deployContractAddress}`}
+                      target="_blank"
+                      href={`https://evm-sidechain.xrpl.org/address/${deployContractAddress}`}
                     >
                       {status}
                     </Link>
