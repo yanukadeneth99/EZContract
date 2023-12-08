@@ -4,7 +4,7 @@ import Link from "next/link";
 export default function Home() {
   return (
     <main className="h-screen w-screen flex justify-center items-center bg-transparent">
-      <div className="w-5/6 h-3/6 lg:h-5/6 backdrop-blur-md backdrop-brightness-50 border-black ring-2 ring-[#5C91CE] ring-offset-2 shadow-2xl shadow-[#5C91CE] border-4 rounded-md p-5 flex justify-center items-center flex-col space-y-12">
+      <div className="w-5/6 h-5/6 md:h-3/6 lg:h-5/6 backdrop-blur-md backdrop-brightness-50 border-black ring-2 ring-[#5C91CE] ring-offset-2 shadow-2xl shadow-[#5C91CE] border-4 rounded-md p-5 flex justify-center items-center flex-col space-y-6 md:space-y-12">
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-mono font-extrabold text-gray-100">
           EZContract
         </h1>
