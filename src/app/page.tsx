@@ -24,11 +24,8 @@ export default function Home() {
           <p className="p-3 border-2 border-[#B42EBB] rounded-xl font-mono text-gray-300">
             ERC-20
           </p>
-          <p className="p-3 border-2 border-[#B42EBB] rounded-xl font-mono  text-gray-300">
+          <p className="p-3 border-2 border-[#B42EBB] rounded-xl font-mono text-gray-300">
             ERC-721
-          </p>
-          <p className="p-3 border-2 border-[#B42EBB] rounded-xl font-mono  text-gray-300">
-            ERC-1155
           </p>
         </div>
         {/* Replace with Connect Wallet - Rainbowkit */}
