@@ -3,7 +3,7 @@ import ContractBlock from "@/components/ContractBlock";
 export default function Deploy() {
   return (
     <main className="w-screen h-screen flex justify-center items-center">
-      <div className="w-4/5 h-4/5 flex flex-col space-y-6 lg:space-y-0 lg:space-x-6 lg:flex-row justify-start md:justify-center items-center p-3 overflow-y-scroll overflow-x-hidden">
+      <div className="w-4/5 h-4/5 flex flex-col space-y-6 lg:space-y-0 lg:space-x-6 lg:flex-row justify-start md:justify-center items-center p-3 overflow-y-scroll md:overflow-y-hidden overflow-x-hidden">
         <ContractBlock
           title="ERC-20"
           tagline="Cryptocurrency"
