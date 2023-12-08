@@ -4,7 +4,7 @@ Create contracts with an interface, never having to worry about typing code.
 
 ## What is EZContract?
 
-EZContract is an easy way to deploy contracts on the blockchain. Instead of writing Solidity Code with Hardhat to deploy, simply fill in the information about your project and just deploy!
+EZContract is an easy way to deploy contracts on the [XRP EVM Sidechain](https://opensource.ripple.com/docs/evm-sidechain/intro-to-evm-sidechain/). Instead of writing Solidity Code with Hardhat to deploy, simply fill in the information about your project and just deploy!
 
 Contracts deployed using EZContract are not stored anywhere nor controlled by us. Everything you create, you own completely. To be honest, we don't even know what you did after you deployed.
 
@@ -18,15 +18,16 @@ Fill out the form, and submit!
 
 ![FillFormERC20](https://i.imgur.com/d6gYPKq.jpg)
 
-## Setup
+## XRP EVM Sidechain
 
-Make an `.env.local` file and fill in the following information
+This is the newest project by the XRP Team to have an EVM comptaible chain for smart contracts!
 
-```env
-NEXT_PUBLIC_APP_NAME=""
-NEXT_PUBLIC_APP_ID=""
-NEXT_PUBLIC_ALCHEMY_API=""
-```
+Some highlights of the EVM sidechain include:
+
+- Support for 1000 transactions per second, enabling large loads and throughput.
+- Low transaction confirmation times, producing a block every 5 seconds.
+- 1 block finalization time; once a block is added to the chain and confirmed, it's considered final.
+- Full Ethereum Virtual Machine (EVM) compatibility, enabling you to connect your wallet and interact with or deploy smart contracts written in Solidity.
 
 ## Phases
 
@@ -49,3 +50,14 @@ A: Absolutely NOT. The contracts haven't been audited yet for Production applica
 
 Q: Is this application free?
 A: Yes, this application is meant to be free; open-source, community project.
+
+## Setup
+
+Make an `.env.local` file and fill in the following information
+
+```env
+NEXT_PUBLIC_APP_NAME=""
+NEXT_PUBLIC_APP_ID=""
+```
+
+Go to [WalletConnect](https://cloud.walletconnect.com/sign-in) to get your own App ID.

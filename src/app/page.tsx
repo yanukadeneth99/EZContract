@@ -9,9 +9,16 @@ export default function Home() {
           EZContract
         </h1>
         <p className="text-sm md:text-md 2xl:text-xl text-center font-mono text-gray-200">
-          Easily deploy contracts without having to write code. Simply connect
-          your wallet, get started on a contract type, enter the required
-          information, and deploy!
+          Easily deploy contracts on the{" "}
+          <Link
+            className="text-[#4177B3]"
+            href="https://opensource.ripple.com/docs/evm-sidechain/intro-to-evm-sidechain/"
+            target="_blank"
+          >
+            XRP EVM Sidechain
+          </Link>{" "}
+          without having to write code. Simply Get Started, connect your wallet,
+          choose your contract type, fill the required information, and deploy!
         </p>
         <div className="flex flex-row justify-center items-center w-full text-sm space-x-2 md:text-md md:space-x-12 md:pt-6">
           <p className="p-3 border-2 border-[#B42EBB] rounded-xl font-mono text-gray-300">
