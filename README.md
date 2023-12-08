@@ -22,6 +22,10 @@ Fill out the form, and submit!
 
 This is the newest project by the XRP Team to have an EVM comptaible chain for smart contracts!
 
+You can easily add the XRP EVM Sidechain network after selecting what contract to deploy:
+
+![XRPWalletAddGIF](https://github.com/yanukadeneth99/EZContract/assets/61384503/c2b94e49-41db-42c5-9945-9bc41da3bf37)
+
 Some highlights of the EVM sidechain include:
 
 - Support for 1000 transactions per second, enabling large loads and throughput.

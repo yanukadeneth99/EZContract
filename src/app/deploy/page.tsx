@@ -23,6 +23,7 @@ export default function Deploy() {
           tagline="NFT"
           description="Deploy this contract when you want to create a NFT that people can mint. One NFT can be owned by multiple people."
           path="/deploy/1155"
+          disable
         />
       </div>
     </main>
