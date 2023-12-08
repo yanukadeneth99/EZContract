@@ -43,10 +43,6 @@ Some highlights of the EVM sidechain include:
 
 Feel free to contribute to this project to make it better and add in new features and contracts!
 
-## Analytics
-
-This Application contains Firebase Analytics to collect information in order to improve the application.
-
 ## FAQ
 
 Q: Is this production ready?
