@@ -571,7 +571,7 @@ export default function Page() {
                   onValueChange={setWhitelistPrice}
                   startContent={
                     <div className="pointer-events-none flex items-center">
-                      <span className="text-default-400 text-small">ETH</span>
+                      <span className="text-default-400 text-small">XRP</span>
                     </div>
                   }
                 />
@@ -583,7 +583,7 @@ export default function Page() {
               } text-xs text-center lg:text-right w-full lg:w-4/6 lg:self-end font-mono`}
             >
               This will the whitelist price of one NFT. Note that the price will
-              be in ETH. The addresses that you add can purchase the NFT at this
+              be in XRP. The addresses that you add can purchase the NFT at this
               price.
             </p>
           </div>
